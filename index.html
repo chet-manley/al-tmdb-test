@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html ng-app="alTMDBApp">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+	<title>al-test-tmdb</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<script src="libs/angular-1.3.11.min.js"></script>
+</head>
+<body>
+	<div ng-controller="actorSearchController">
+		<label for="actorName">Actor's name:</label>
+		<input type="text" id="actorName" ng-model="actorName" placeholder="Enter actor's name here" />
+		<button>Search</button>
+		<hr />
+		<div>
+			<h1>Results:</h1>
+			<ul>
+				<li ng-repeat="result in results">
+					<img src="" />
+					Movie name / synopsis
+				</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

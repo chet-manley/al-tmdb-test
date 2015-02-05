@@ -179,7 +179,6 @@
 					.then(function () {
 						ctrl.movies = searchService.movies;
 						ctrl.modal.close();
-						console.log(ctrl.movies);
 					// error
 					}, function (reason) {
 						ctrl.modal.message = reason;

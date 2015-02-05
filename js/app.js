@@ -1,104 +1,131 @@
-angular.module('alTMDBApp', [])
-	.factory('searchService', function ($http) {
-		'use strict';
-		var config = {
-			api : {
-				url : {
-					scheme		: 'https',
-					hostname	: 'api.themoviedb.org',
-					path		: '/3'
+(function (angular, undefined) {
+	'use strict';
+	angular.module('alTMDBApp', [])
+		.factory('searchService', function searchService($http, $q) {
+			var config = {
+					api : {
+						url : {
+							scheme		: 'https',
+							hostname	: 'api.themoviedb.org',
+							path		: '/3'
+						},
+						key	: '04b98b8b92e93eff9a43f607200e084f'
+					}
 				},
-				key	: '04b98b8b92e93eff9a43f607200e084f'
-			}
-		},
-			request = {
-				method : 'GET',
-				url : config.api.url.scheme + '://' + config.api.url.hostname + config.api.url.path,
-				headers : {
-					'Accept' : 'application/json'
+				request = {
+					method : 'GET',
+					url : config.api.url.scheme + '://' + config.api.url.hostname + config.api.url.path,
+					headers : {
+						'Accept' : 'application/json'
+					},
+					params : {
+						'api_key' : config.api.key
+					}
 				},
-				params : {
-					'api_key' : config.api.key
-				}
-			};
-		this.actor = '';
-		this.movies = {};
-		
-		return {
+				// expects a proper request object
+				doSearch = function doSearch(req) {
+					return $http(req)
+						.then(function (response) {
+							return response.data;
+						}, function (error) {
+							throw error.status + " : " + error.statusText;
+						});
+				},
+				// define our service properties
+				svc = {
+					actor : '',
+					actors: {},
+					movies: {},
+					lastErr : null
+				};
+			// extend our service with methods
 			/* 
 			 * Perform Actor search using text in input field.
-			 * Accepts a string as search param and a callback function as next
+			 * Accepts a string as search param
 			 */
-			fetchActors : function fetchActors(search, next) {
+			svc.getActors = function getActors(search) {
 				// exit if query is not a string or is 4 characters or less
-				if (typeof search !== 'string' || search.length <= 4) {return next('Invalid query.'); }
+				if (typeof search !== 'string' || search.length <= 4) {
+					svc.lastErr = 'Invalid query.';
+					return $q.reject(svc.lastErr);
+				}
 				// turn search query into URI compatible string
 				search = encodeURIComponent(search);
 				
-				return $http.get(request.url + '/search/person', {params: {api_key: request.params.api_key, query: search}})
-					.success(function (actors) {
-						if (!actors || actors.total_results === 0) {return next('Response is empty.'); }
-						return next(null, actors);
-					})
-					.error(function (data) {
-						return next(data);
+				return doSearch({
+					method: request.method,
+					url: request.url + '/search/person',
+					headers: request.headers,
+					params: {
+						api_key: request.params.api_key,
+						query: search
+					}
+				})
+					.then(function (response) {
+						if (!response || response.total_results === 0) {return $q.reject('Nothing found.'); }
+						svc.actors = response;
 					});
-			},
+			};
 			/*
 			 * Perform Movie search using Actor's ID.
-			 * Accepts a number as search param and a callback function as next
+			 * Accepts a number as search param
 			 */
-			fetchMovies : function fetchMovies(search, next) {
+			svc.getMovies = function getMovies(search) {
 				// exit if query is not a number
-				if (typeof search !== 'number') {return next('Invalid query.'); }
+				if (typeof search !== 'number') {
+					svc.error = 'Invalid query.';
+					return false;
+				}
 				// turn search query into URI compatible string
 				search = encodeURIComponent(search);
-				
+
 				return $http.get(request.url + '/person/' + search + '/movie_credits', request)
-					.success(function (movies) {
-						if (!movies || movies.total_results === 0) {return next('Response is empty.'); }
-						return next(null, movies);
+					.success(function (data) {
+						svc.movies = data;
 					})
 					.error(function (data) {
-						return next(data);
+						svc.error = data;
 					});
-			}
-		};
-	// end searchService factory
-	})
-	.controller('actorSearchController', function (searchService) {
-		'use strict';
-		this.results = {};
-		this.doSearch = function doSearch() {
-			searchService.fetchActors(this.actorName, function (error, actors) {
-				if (error) {console.log(error); return false; }
-				console.log(actors);
-				console.log(actors.results[0].id);
-			});
-		};
-	})
-	.controller('movieSearchController', function (searchService) {
-		'use strict';
-		this.results = {};
-		this.doSearch = function doSearch() {
-			searchService.fetchMovies(this.actorId).success(function (movies) {
-				console.log(movies);
-			});
-		};
-	})
-	.controller('movieListController', function ($scope) {
-		'use strict';
-		this.results = {};
-	})
-	.directive('movieList', function () {
-		'use strict';
-		return {
-			scope : {
-				actor : '='
-			},
-			templateUrl		: 'templates/movie-list.html',
-			replace			: true,
-			controller		: 'movieListController',
-			controllerAs	: 'movieListCtrl'
-		};
-	});
+			};
+
+			return svc;
+		// end searchService factory
+		})
+		.controller('actorSearchController', function (searchService) {
+			this.results = {};
+			this.doSearch = function doSearch() {
+				searchService
+					.getActors(this.actorName)
+					.then(function () {
+						console.log(searchService.actors);
+					}, function (reason) {
+						console.log(reason);
+					});
+			};
+		})
+		.controller('movieSearchController', function (searchService) {
+			this.results = {};
+			this.doSearch = function doSearch() {
+				searchService
+					.getMovies(this.actorId)
+					.then(function () {
+						if (searchService.error) {return console.log(searchService.error); }
+						console.log(searchService.movies);
+					});
+			};
+		})
+		.controller('movieListController', function ($scope) {
+			this.results = {};
+		})
+		.directive('movieList', function () {
+			return {
+				scope : {
+					actor : '='
+				},
+				templateUrl		: 'templates/movie-list.html',
+				replace			: false,
+				controller		: 'movieListController',
+				controllerAs	: 'movieListCtrl'
+			};
+		});
+}(angular));

@@ -10,7 +10,9 @@
 							path		: '/3'
 						},
 						key	: '04b98b8b92e93eff9a43f607200e084f'
-					}
+					},
+					actorImgPath : 'https://image.tmdb.org/t/p/w45',
+					movieImgPath : 'https://image.tmdb.org/t/p/w154'
 				},
 				request = {
 					method : 'GET',
@@ -22,7 +24,7 @@
 						'api_key' : config.api.key
 					}
 				},
-				// expects a proper request object
+				// Accepts a proper request object as req param
 				doSearch = function doSearch(req) {
 					return $http(req)
 						.then(function (response) {
@@ -41,7 +43,7 @@
 			// extend our service with methods
 			/* 
 			 * Perform Actor search using text in input field.
-			 * Accepts a string as search param
+			 * @param search = string
 			 */
 			svc.getActors = function getActors(search) {
 				// exit if query is not a string or is 4 characters or less
@@ -49,8 +51,6 @@
 					svc.lastErr = 'Invalid query.';
 					return $q.reject(svc.lastErr);
 				}
-				// turn search query into URI compatible string
-				search = encodeURIComponent(search);
 				
 				return doSearch({
 					method: request.method,
@@ -58,74 +58,144 @@
 					headers: request.headers,
 					params: {
 						api_key: request.params.api_key,
-						query: search
+						query: encodeURIComponent(search)
 					}
 				})
 					.then(function (response) {
-						if (!response || response.total_results === 0) {return $q.reject('Nothing found.'); }
-						svc.actors = response;
+						var actor;
+						if (!response || response.total_results === 0) {return $q.reject('No actors matching ' + decodeURI(search) + ' were found.'); }
+						// clear previous entries
+						svc.actors = {};
+						// create our own actors object with relevant info
+						for (actor in response.results) {
+							if (response.results.hasOwnProperty(actor)) {
+								svc.actors[actor] = {
+									name : response.results[actor].name,
+									id : response.results[actor].id,
+									popularity : response.results[actor].popularity
+								};
+								// add img url if it exists
+								if (response.results[actor].profile_path) {
+									svc.actors[actor].imgUrl = config.actorImgPath + response.results[actor].profile_path;
+								}
+							}
+						}
 					});
 			};
 			/*
 			 * Perform Movie search using Actor's ID.
-			 * Accepts a number as search param
+			 * @param search = number
 			 */
 			svc.getMovies = function getMovies(search) {
 				// exit if query is not a number
 				if (typeof search !== 'number') {
 					svc.error = 'Invalid query.';
-					return false;
+					return $q.reject(svc.lastErr);
 				}
 				// turn search query into URI compatible string
 				search = encodeURIComponent(search);
-
-				return $http.get(request.url + '/person/' + search + '/movie_credits', request)
-					.success(function (data) {
-						svc.movies = data;
-					})
-					.error(function (data) {
-						svc.error = data;
+				
+				return doSearch({
+					method: request.method,
+					url: request.url + '/person/' + search + '/movie_credits',
+					headers: request.headers,
+					params: request.params
+				})
+					.then(function (response) {
+						var movie;
+						if (!response || !response.cast) {return $q.reject('No movies were found for this actor.'); }
+						// clear previous entries
+						svc.movies = {};
+						// create our own movies object with relevant info
+						for (movie in response.cast) {
+							if (response.cast.hasOwnProperty(movie)) {
+								svc.movies[response.cast[movie].id] = {
+									title : response.cast[movie].title,
+									date : response.cast[movie].release_date
+								};
+								// add img url if it exists
+								if (response.cast[movie].poster_path) {
+									svc.movies[response.cast[movie].id].imgUrl = config.movieImgPath + response.cast[movie].poster_path;
+								}
+							}
+						}
+						//svc.movies = response.cast;
 					});
 			};
 
 			return svc;
 		// end searchService factory
 		})
-		.controller('actorSearchController', function (searchService) {
-			this.results = {};
-			this.doSearch = function doSearch() {
+		.controller('appController', function (searchService) {
+			var ctrl = this;
+			ctrl.actor = '';
+			ctrl.actors = {};
+			ctrl.actorId = 0;
+			ctrl.movies = {};
+			ctrl.imgPath = 'https://image.tmdb.org/t/p';
+			ctrl.profileImgSize = '/w45';
+			ctrl.modal = {
+				visible : false,
+				message : '',
+				closeBtn : true,
+				close : function close() {
+					ctrl.modal.visible = false;
+					ctrl.modal.message = '';
+				}
+			};
+			// search for actor
+			ctrl.doActorSearch = function doActorSearch() {
+				ctrl.modal.visible = true;
+				ctrl.modal.message = 'Searching...';
 				searchService
-					.getActors(this.actorName)
+					// send text in search box to search service
+					.getActors(ctrl.searchName)
+					// result
 					.then(function () {
-						console.log(searchService.actors);
+						ctrl.actors = searchService.actors;
+						ctrl.modal.message = false;
+					// error
 					}, function (reason) {
-						console.log(reason);
+						ctrl.modal.message = reason;
 					});
 			};
-		})
-		.controller('movieSearchController', function (searchService) {
-			this.results = {};
-			this.doSearch = function doSearch() {
+			/*
+			 * TODO: select actor from list
+			 * default to first in list
+			 */
+			// do movie search by actor ID
+			ctrl.doMovieSearch = function doMovieSearch(actor) {
+				ctrl.modal.visible = true;
+				ctrl.modal.message = 'Searching...';
+				// cache actor's id and name
+				ctrl.actorId = actor.id;
+				ctrl.actor = actor.name;
+				// replace text in input element with actor's name
+				ctrl.searchName = actor.name;
 				searchService
-					.getMovies(this.actorId)
+					// send actor ID number to search service
+					.getMovies(ctrl.actorId)
+					// result
 					.then(function () {
-						if (searchService.error) {return console.log(searchService.error); }
-						console.log(searchService.movies);
+						ctrl.movies = searchService.movies;
+						ctrl.modal.close();
+						console.log(ctrl.movies);
+					// error
+					}, function (reason) {
+						ctrl.modal.message = reason;
 					});
 			};
 		})
-		.controller('movieListController', function ($scope) {
-			this.results = {};
-		})
-		.directive('movieList', function () {
-			return {
-				scope : {
-					actor : '='
-				},
-				templateUrl		: 'templates/movie-list.html',
-				replace			: false,
-				controller		: 'movieListController',
-				controllerAs	: 'movieListCtrl'
+		.directive('inputEnter', function inputEnter() {
+			return function (scope, element, attrs) {
+				element.bind("keydown keypress", function (event) {
+					if (event.which === 13) {
+						scope.$apply(function () {
+							scope.$eval(attrs.inputEnter);
+						});
+						event.preventDefault();
+					}
+				});
 			};
 		});
 }(angular));

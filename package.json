@@ -1,24 +1,27 @@
 {
-	"name": "al-tmdb-test",
-	"version": "0.1.0",
-	"description": "Alert Logic test for UI development using TheMovieDB API",
-	"keywords": ["TMDB", "The Movie Database", "API"],
-	"bugs": {
-		"url": "https://github.com/chet-manley/al-tmdb-test/issues",
-		"email": "jgardner+tmdbtest@alertlogic.com"
-	},
-	"author": {
-		"name": "Chet Manley",
-		"url": "http://archer.wikia.com/wiki/Chet_Manley"
-	},
-	"repository":  {
-		"type": "git",
-		"url": "https://github.com/chet-manley/al-tmdb-test.git"
-	},
-	"dependencies": {
-		
-	},
-	"devDependencies": {
-		"grunt": "*"
-	}
+  "name": "al-tmdb-test",
+  "version": "0.1.0",
+  "description": "Alert Logic test for UI development using TheMovieDB API",
+  "keywords": [
+    "TMDB",
+    "The Movie Database",
+    "API"
+  ],
+  "bugs": {
+    "url": "https://github.com/chet-manley/al-tmdb-test/issues",
+    "email": "jgardner+tmdbtest@alertlogic.com"
+  },
+  "author": {
+    "name": "Chet Manley",
+    "url": "http://archer.wikia.com/wiki/Chet_Manley"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chet-manley/al-tmdb-test.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-uglify": "^0.7.0"
+  }
 }

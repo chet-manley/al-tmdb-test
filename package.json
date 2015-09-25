@@ -16,9 +16,13 @@
     "type": "git",
     "url": "git+https://github.com/chet-manley/al-tmdb-test.git"
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-download": "0.0.1",
+    "gulp-uglify": "^1.4.1"
   },
+  "devDependencies": {},
   "homepage": "https://github.com/chet-manley/al-tmdb-test#readme",
   "main": "index.html",
   "scripts": {

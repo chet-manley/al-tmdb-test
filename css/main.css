@@ -20,6 +20,10 @@ section {
 	background: #D0D0D0;
 }
 
+.hide {
+	display: none !important;
+}
+
 .actor-list {
 	overflow: auto;
 	width: 250px;

@@ -1,22 +1,22 @@
 define(['jquery', 'flight', 'transparency', 'withAjax'],
 function($,        flight,   transparency,   withAjax){
 
-	var base = flight.component(function(){
+	var search = flight.component(function(){
 
 		this.attributes({
 			searchName: '#searchName',
 					go: '#executeSearch'
 		});
 
-		this.testClick = function(ev,d){
-			console.log($(ev.target));
+		this.search = function(ev,d){
+			this.trigger(document, 'showActors', {test: 'crap'});
 		};
 
 		this.after('initialize', function(){
-			this.on(document, 'click', this.testClick);
+			this.on(this.select('go'), 'click', this.search);
 		});
 
 	}, withAjax);
 
-	return base;
+	return search;
 });

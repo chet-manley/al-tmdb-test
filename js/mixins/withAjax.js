@@ -1,6 +1,8 @@
 //Ajax
 define(['jquery'], function($){
 
+	//Primary XHR mechanism
+	//example: this.json('GET', 'https://exam.ple/something', {key: 'value'}, 'someEventName');
 	function withAjax(){
 		/*Note! Triggers don't seem to pass but the first object in the array of objects originally sent from here
 		  I dont think i can pass arrays as a primary variable, only objects, but passing arrays of objects as a member (e.g. data.docs) works fine

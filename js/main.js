@@ -10,7 +10,9 @@ require.config({
 		        jquery: 'lib/jquery.min',
 
 		//Components
-		base: 'components/base',
+		search: 'components/search',
+		movieList: 'components/movieList',
+		actorList: 'components/actorList',
 
 		//Mixins
 		withAjax: 'mixins/withAjax'
@@ -18,10 +20,12 @@ require.config({
 });
 
 //Primary Init
-requirejs(['jquery','flight', 'base'],
-function(   $,       flight,   base){
+requirejs(['jquery','flight', 'search', 'movieList', 'actorList'],
+function(   $,       flight,   search,   movieList,   actorList){
 	
 	//Attach Flight Components to DOM
-	base.attachTo('#main');
+	search.attachTo('#searchBox');
+	movieList.attachTo('#movieList');
+	actorList.attachTo('#actorList');
 
 });

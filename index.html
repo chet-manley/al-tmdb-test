@@ -9,15 +9,15 @@
 </head>
 <body>
 	<div id="main">
-		<!-- Search box -->
-		<section>
+		<!-- Search box (js/components/search.js) -->
+		<section id="searchBox">
 			<label for="searchName">Search movies by actor:</label>
 			<input type="text" id="searchName" placeholder="Enter actor's name here" />
 			<button id="executeSearch">Search</button>
 		</section>
 
-		<!-- Movies list -->
-		<section class="hide">
+		<!-- Movies list (js/components/moveList.js) -->
+		<section id="movieList" class="hide">
 			<ul class="movie-list">
 				<li><h2>Actor</h2></li>
 				<li class="movie-list-item">
@@ -29,11 +29,11 @@
 				</li>
 			</ul>
 		</section>
-		
-		<!-- Searched actors modal -->
-		<div class="overlay hide">
+
+		<!-- Searched actors modal (js/components/actorList.js) -->
+		<div id="actorList" class="overlay hide">
 			<div class="ng-modal">
-				<button class="ng-modal-close-btn"></button>
+				<button id="closeActorList" class="ng-modal-close-btn"></button>
 				<h2><!--Modal message--></h2>
 				<ul class="actor-list">
 					<li class="actor-list-item">

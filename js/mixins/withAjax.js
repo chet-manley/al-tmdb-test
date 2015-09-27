@@ -11,7 +11,8 @@ define(['jquery'], function($){
 		*/
 		this.json = function(method, url, rData, evName, evNode){
 			var $this = this;
-			var request = $.ajax({ type: method, url: '/node/'+url, dataType: 'json', data: rData });
+			rData['api_key'] = '04b98b8b92e93eff9a43f607200e084f';//add api key
+			var request = $.ajax({ type: method, url: 'https://api.themoviedb.org'+url, dataType: 'json', data: rData });
 			request.done(function(data){
 				if(evNode){//DOM Node Specified
 					$this.trigger(evNode, evName, data);

@@ -9,7 +9,11 @@ function($,        flight,   transparency,   withAjax){
 		});
 
 		this.search = function(ev,d){
-			this.trigger(document, 'showActors', {test: 'crap'});
+			var searchTerm = this.select('searchName').val();
+			if(searchTerm !== ''){
+				searchTerm = encodeURI(searchTerm);
+				this.json('GET', '/3/search/person', { query: searchTerm }, 'showActors');
+			}
 		};
 
 		this.after('initialize', function(){

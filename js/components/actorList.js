@@ -10,6 +10,8 @@ function($,        flight,   transparency,   withAjax){
 
 		this.showActors = function(ev,d){
 			console.log(d);
+			//image path is https://image.tmdb.org/t/p/w45/[imagename]
+			//$('#actorList').removeClass('hide');
 			//console.log($('#actorList').removeClass('hide'));
 		};
 

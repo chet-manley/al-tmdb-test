@@ -12,19 +12,19 @@
 		<!-- Search box (js/components/search.js) -->
 		<section id="searchBox">
 			<label for="searchName">Search movies by actor:</label>
-			<input type="text" id="searchName" placeholder="Enter actor's name here" />
+			<input type="search" id="searchName" placeholder="Enter actor's name here" />
 			<button id="executeSearch">Search</button>
 		</section>
 
 		<!-- Movies list (js/components/moveList.js) -->
 		<section id="movieList" class="hide">
 			<ul class="movie-list">
-				<li><h2>Actor</h2></li>
-				<li class="movie-list-item">
-					<img src="" alt="No Img" />
+				<li><h2 id="selectedActor"></h2></li>
+				<li id="movies" class="movie-list-item">
+					<div data-bind="poster_path"></div>
 					<span>
-						<h3>Title</h3><h4><!-- Movie Title --></h4>
-						<h3>Date</h3><h4><!-- Movie Date --></h4>
+						<h3>Title</h3><h4 data-bind="title"><!-- Movie Title --></h4>
+						<h3>Date</h3><h4 data-bind="release_date"><!-- Movie Date --></h4>
 					</span>
 				</li>
 			</ul>
@@ -34,11 +34,12 @@
 		<div id="actorList" class="overlay hide">
 			<div class="ng-modal">
 				<button id="closeActorList" class="ng-modal-close-btn"></button>
-				<h2><!--Modal message--></h2>
+				<h2 id="modalMessage"><!--Modal message--></h2>
 				<ul class="actor-list">
 					<li class="actor-list-item">
-						<img src="" />
-						<span><!--Actor name--></span>
+						<span data-bind="id" class='hide'></span>
+						<span data-bind="profile_path"></span>
+						<span data-bind="name"></span>
 					</li>
 				</ul>
 			</div>

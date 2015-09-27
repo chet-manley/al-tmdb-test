@@ -22,10 +22,8 @@ define(['jquery'], function($){
 				}
 			});
 			request.fail(function(jqXHR){
-				//$this.trigger(document, 'ajaxError');
-				if(jqXHR.status === 400 || jqXHR.status === 401){
-					window.location = '/login.html';
-				}
+				alert('Something Broke, check console for more info');
+				console.log(jqXHR);
 			});
 		};
 	}

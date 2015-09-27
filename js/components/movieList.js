@@ -4,12 +4,20 @@ function($,        flight,   transparency,   withAjax){
 	var movieList = flight.component(function(){
 
 		this.attributes({
-			main: '#movieList'
+			selectedActor: '#selectedActor',
+			movies: '#movies'
 		});
 
 		this.showMovies = function(ev,d){
-			console.log(this.select('main'));
-			this.select('main').removeClass('hide');
+			this.select('movies').render(d.cast, {
+				poster_path: {
+					html: function(params){
+						if(this.poster_path !== null) return '<img src="https://image.tmdb.org/t/p/w154'+this.poster_path+'">';
+						else return '';
+					}
+				}
+			});
+			$('#movieList').removeClass('hide');
 		};
 
 		this.after('initialize', function(){

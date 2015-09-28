@@ -17,8 +17,16 @@ function($,        flight,   transparency,   withAjax){
 			}
 		};
 
+		//when enter is pressed, click go
+		this.enter = function(ev,d){
+			if(ev.keyCode === 13){
+				this.select('go').click();
+			}
+		};
+
 		this.after('initialize', function(){
 			this.on(this.select('go'), 'click', this.search);
+			this.on(this.select('searchName'), 'keyup', this.enter);
 		});
 
 	}, withAjax);

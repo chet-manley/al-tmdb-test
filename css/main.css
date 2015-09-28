@@ -45,7 +45,7 @@ section {
 	border-radius: 3px;
 	background: #E0E0E0;
 }
-.movie-list-item div img {
+.movie-list-item img {
 	display: block;
 	padding: 5px;
 }

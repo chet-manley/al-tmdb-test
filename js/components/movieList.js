@@ -11,9 +11,9 @@ function($,        flight,   transparency,   withAjax){
 		this.showMovies = function(ev,d){
 			this.select('movies').render(d.cast, {
 				poster_path: {
-					html: function(params){
-						if(this.poster_path !== null) return '<img src="https://image.tmdb.org/t/p/w154'+this.poster_path+'">';
-						else return '';
+					src: function(params){
+						if(this.poster_path === null) return '';
+						else return 'https://image.tmdb.org/t/p/w154'+this.poster_path;
 					}
 				}
 			});

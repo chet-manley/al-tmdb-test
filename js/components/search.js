@@ -1,3 +1,4 @@
+//attaches to #searchBox in index.html
 define(['jquery', 'flight', 'transparency', 'withAjax'],
 function($,        flight,   transparency,   withAjax){
 

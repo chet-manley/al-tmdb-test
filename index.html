@@ -3,41 +3,43 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
-	<title>al-test-tmdb</title>
+	<title>al-test-tmdb Flight-Style!</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<script src="libs/angular-1.3.12.min.js"></script>
-	<script src="js/app.js"></script>
+	<script data-main="js/main" src="js/lib/require.js"></script>
 </head>
-<body ng-app="alTMDBApp">
-	<div ng-controller="appController as appCtrl">
-		<!-- Search box -->
-		<section>
+<body>
+	<div id="main">
+		<!-- Search box (js/components/search.js) -->
+		<section id="searchBox">
 			<label for="searchName">Search movies by actor:</label>
-			<input type="text" id="searchName" ng-model="appCtrl.searchName" data-input-enter="appCtrl.doActorSearch()" placeholder="Enter actor's name here" />
-			<button ng-click="appCtrl.doActorSearch()">Search</button>
+			<input type="search" id="searchName" placeholder="Enter actor's name here" />
+			<button id="executeSearch">Search</button>
 		</section>
-		<!-- Movies list -->
-		<section ng-show="appCtrl.actor">
+
+		<!-- Movies list (js/components/moveList.js) -->
+		<section id="movieList" class="hide">
 			<ul class="movie-list">
-				<li><h2>{{appCtrl.actor}}</h2></li>
-				<li ng-repeat="movie in appCtrl.movies" class="movie-list-item">
-					<img ng-src="{{movie.imgUrl}}" />
+				<li><h2 id="selectedActor"></h2></li>
+				<li id="movies" class="movie-list-item">
+					<img data-bind="poster_path" src="">
 					<span>
-						<h3>Title</h3><h4>{{movie.title}}</h4>
-						<h3>Date</h3><h4>{{movie.date}}</h4>
+						<h3>Title</h3><h4 data-bind="title"><!-- Movie Title --></h4>
+						<h3>Date</h3><h4 data-bind="release_date"><!-- Movie Date --></h4>
 					</span>
 				</li>
 			</ul>
 		</section>
-		<!-- Searched actors modal -->
-		<div class="overlay" ng-show="appCtrl.modal.visible">
+
+		<!-- Searched actors modal (js/components/actorList.js) -->
+		<div id="actorList" class="overlay hide">
 			<div class="ng-modal">
-				<button class="ng-modal-close-btn" ng-show="appCtrl.modal.closeBtn" ng-click="appCtrl.modal.close()"></button>
-				<h2 ng-show="appCtrl.modal.message">{{appCtrl.modal.message}}</h2>
-				<ul ng-hide="appCtrl.modal.message" class="actor-list">
-					<li ng-repeat="actor in appCtrl.actors" ng-click="appCtrl.doMovieSearch(actor)" class="actor-list-item">
-						<img ng-src="{{actor.imgUrl}}" />
-						<span>{{actor.name}}</span>
+				<button id="closeActorList" class="ng-modal-close-btn"></button>
+				<h2 id="modalMessage"><!--Modal message--></h2>
+				<ul class="actor-list">
+					<li class="actor-list-item">
+						<span data-bind="id" class='hide'></span>
+						<span data-bind="profile_path"></span>
+						<span data-bind="name"></span>
 					</li>
 				</ul>
 			</div>
